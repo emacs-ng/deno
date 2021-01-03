@@ -1201,17 +1201,15 @@ impl RequestMethod {
         find_in_strings,
         find_in_comments,
         provide_prefix_and_suffix_text_for_rename,
-      )) => {
-        json!({
-          "id": id,
-          "method": "findRenameLocations",
-          "specifier": specifier,
-          "position": position,
-          "findInStrings": find_in_strings,
-          "findInComments": find_in_comments,
-          "providePrefixAndSuffixTextForRename": provide_prefix_and_suffix_text_for_rename
-        })
-      }
+      )) => json!({
+        "id": id,
+        "method": "findRenameLocations",
+        "specifier": specifier,
+        "position": position,
+        "findInStrings": find_in_strings,
+        "findInComments": find_in_comments,
+        "providePrefixAndSuffixTextForRename": provide_prefix_and_suffix_text_for_rename
+      }),
     }
   }
 }
