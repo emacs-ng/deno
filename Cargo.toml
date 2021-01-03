@@ -2,6 +2,9 @@
 
 [workspace]
 members = [
+
+]
+exclude = [
   "cli",
   "core",
   "runtime",
@@ -9,9 +12,7 @@ members = [
   "test_util",
   "op_crates/fetch",
   "op_crates/web",
-  "op_crates/crypto"
-]
-exclude = [
+  "op_crates/crypto",
   "std/hash/_wasm"
 ]
 
