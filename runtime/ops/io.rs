@@ -498,15 +498,12 @@ pub fn op_read(
           stream.read(&mut zero_copy).await?
         } else if let Some(stream) = resource.downcast_rc::<StreamResource>() {
           let mut total_bytes_read = 0;
-          let len = zero_copy.len();
-          let mut slice = &mut zero_copy[0..len];
-          while total_bytes_read < len {
-            let read = stream.clone().read(&mut slice).await?;
+          while total_bytes_read < zero_copy.len() {
+            let read = stream.clone().read(&mut zero_copy).await?;
             if read == 0 { break; }
-            total_bytes_read += read;
-            slice = &mut zero_copy[total_bytes_read..len];
-          }
-          total_bytes_read
+              total_bytes_read += read;
+            }
+            total_bytes_read
         } else {
           return Err(bad_resource_id());
         };
