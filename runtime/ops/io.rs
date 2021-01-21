@@ -325,9 +325,19 @@ impl StreamResource {
       debug_assert!(self.client_tls_stream.is_none());
       let mut fs_file = RcRef::map(&self, |r| r.fs_file.as_ref().unwrap())
         .borrow_mut()
-        .await;
-      let nwritten = (*fs_file).0.as_mut().unwrap().read(buf).await?;
-      return Ok(nwritten);
+            .await;
+
+	let len = buf.len();
+	let mut total_bytes_read = 0;
+	let mut slice = &mut buf[0..len];
+	let file_handle = (*fs_file).0.as_mut().unwrap();
+	while total_bytes_read < len {
+	    let read = file_handle.read(&mut slice).await?;
+	    if read == 0 { break; }
+	    total_bytes_read += read;
+	    slice = &mut buf[total_bytes_read..len];
+	}
+      return Ok(total_bytes_read);
     } else if self.child_stdout.is_some() {
       debug_assert!(self.child_stdin.is_none());
       debug_assert!(self.child_stderr.is_none());
@@ -396,10 +406,18 @@ impl StreamResource {
       debug_assert!(self.client_tls_stream.is_none());
       let mut fs_file = RcRef::map(&self, |r| r.fs_file.as_ref().unwrap())
         .borrow_mut()
-        .await;
-      let nwritten = (*fs_file).0.as_mut().unwrap().write(buf).await?;
-      (*fs_file).0.as_mut().unwrap().flush().await?;
-      return Ok(nwritten);
+            .await;
+      let len = buf.len();
+      let mut total_bytes_written = 0;
+      let mut slice = &buf[0..len];
+      let file_handle = (*fs_file).0.as_mut().unwrap();
+      while total_bytes_written < len {
+        let written = file_handle.write(slice).await?;
+        total_bytes_written += written;
+        slice = &buf[total_bytes_written..len];
+      }
+      file_handle.flush().await?;
+      return Ok(total_bytes_written);
     } else if self.child_stdin.is_some() {
       debug_assert!(self.child_stdout.is_none());
       debug_assert!(self.child_stderr.is_none());
