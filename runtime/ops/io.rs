@@ -326,18 +326,13 @@ impl StreamResource {
       let mut fs_file = RcRef::map(&self, |r| r.fs_file.as_ref().unwrap())
         .borrow_mut()
             .await;
-
-	let len = buf.len();
-	let mut total_bytes_read = 0;
-	let mut slice = &mut buf[0..len];
-	let file_handle = (*fs_file).0.as_mut().unwrap();
-	while total_bytes_read < len {
-	    let read = file_handle.read(&mut slice).await?;
-	    if read == 0 { break; }
-	    total_bytes_read += read;
-	    slice = &mut buf[total_bytes_read..len];
-	}
-      return Ok(total_bytes_read);
+      let f = (*fs_file).0.as_mut().unwrap().try_clone().await?;
+      let mut fstd = f.into_std().await;
+      let read = tokio::task::block_in_place(move || {
+        use std::io::Read;
+        fstd.read(buf)
+      })?;
+      return Ok(read);
     } else if self.child_stdout.is_some() {
       debug_assert!(self.child_stdin.is_none());
       debug_assert!(self.child_stderr.is_none());
@@ -407,17 +402,13 @@ impl StreamResource {
       let mut fs_file = RcRef::map(&self, |r| r.fs_file.as_ref().unwrap())
         .borrow_mut()
             .await;
-      let len = buf.len();
-      let mut total_bytes_written = 0;
-      let mut slice = &buf[0..len];
-      let file_handle = (*fs_file).0.as_mut().unwrap();
-      while total_bytes_written < len {
-        let written = file_handle.write(slice).await?;
-        total_bytes_written += written;
-        slice = &buf[total_bytes_written..len];
-      }
-      file_handle.flush().await?;
-      return Ok(total_bytes_written);
+      let f = (*fs_file).0.as_mut().unwrap().try_clone().await?;
+      let mut fstd = f.into_std().await;
+      let written = tokio::task::block_in_place(move || {
+        use std::io::Write;
+        fstd.write(buf)
+      })?;
+      return Ok(written);
     } else if self.child_stdin.is_some() {
       debug_assert!(self.child_stdout.is_none());
       debug_assert!(self.child_stderr.is_none());
