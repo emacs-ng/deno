@@ -794,6 +794,12 @@ declare namespace Deno {
      * the process's umask).
      * Ignored on Windows. */
     mode?: number;
+    /** Allows reading operations on this file to block until the requested
+     * buffer is filled, or until data is not available, whatever comes first. */
+    readMightBlock?: boolean;
+    /** Allows writing operations on this file to block until the requested
+     * buffer is filled, or until data is not available, whatever comes first. */
+    writeMightBlock?: boolean;
   }
 
   /**
