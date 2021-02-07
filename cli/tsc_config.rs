@@ -1,4 +1,4 @@
-// Copyright 2018-2020 the Deno authors. All rights reserved. MIT license.
+// Copyright 2018-2021 the Deno authors. All rights reserved. MIT license.
 
 use crate::fs_util::canonicalize_path;
 use deno_core::error::AnyError;
@@ -75,6 +75,7 @@ pub const IGNORED_COMPILER_OPTIONS: &[&str] = &[
   "inlineSources",
   "module",
   "noEmitHelpers",
+  "noErrorTruncation",
   "noLib",
   "noResolve",
   "outDir",
