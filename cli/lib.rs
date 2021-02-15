@@ -1147,7 +1147,7 @@ fn init_logger(maybe_level: Option<Level>) {
   .init();
 }
 
-fn get_subcommand(
+pub fn get_subcommand(
   flags: Flags,
 ) -> Pin<Box<dyn Future<Output = Result<(), AnyError>>>> {
   match flags.clone().subcommand {
