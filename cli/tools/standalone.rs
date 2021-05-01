@@ -170,6 +170,10 @@ pub async fn write_standalone_binary(
     if !has_trailer {
       bail!("Could not compile: cannot overwrite {:?}.", &output);
     }
+
+    // Remove file if it was indeed a deno compiled binary, to avoid corruption
+    // (see https://github.com/denoland/deno/issues/10310)
+    std::fs::remove_file(&output)?;
   }
   tokio::fs::write(&output, final_bin).await?;
   #[cfg(unix)]
@@ -220,7 +224,7 @@ pub fn compile_to_runtime_flags(
     lock_write: false,
     log_level: flags.log_level,
     no_check: false,
-    no_prompts: flags.no_prompts,
+    prompt: flags.prompt,
     no_remote: false,
     reload: false,
     repl: false,

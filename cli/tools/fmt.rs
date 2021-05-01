@@ -16,6 +16,8 @@ use deno_core::error::generic_error;
 use deno_core::error::AnyError;
 use deno_core::futures;
 use deno_core::futures::FutureExt;
+use log::debug;
+use log::info;
 use std::fs;
 use std::io::stdin;
 use std::io::stdout;
@@ -316,11 +318,7 @@ fn get_typescript_config(
 fn get_markdown_config() -> dprint_plugin_markdown::configuration::Configuration
 {
   dprint_plugin_markdown::configuration::ConfigurationBuilder::new()
-    // Matches `.dprintrc.json` in the repository
-    .text_wrap(dprint_plugin_markdown::configuration::TextWrap::Always)
-    .ignore_directive("deno-fmt-ignore")
-    .ignore_start_directive("deno-fmt-ignore-start")
-    .ignore_end_directive("deno-fmt-ignore-end")
+    .deno()
     .build()
 }
 
