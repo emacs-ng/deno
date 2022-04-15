@@ -12,6 +12,7 @@ exclude = [
   "test_plugin",
   "test_util",
   "op_crates/crypto",
+  "op_crates/console",
   "op_crates/fetch",
   "op_crates/timers",
   "op_crates/url",
