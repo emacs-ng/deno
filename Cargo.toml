@@ -13,6 +13,7 @@ exclude = [
   "test_util",
   "op_crates/crypto",
   "op_crates/console",
+  "op_crates/file",
   "op_crates/fetch",
   "op_crates/timers",
   "op_crates/url",
